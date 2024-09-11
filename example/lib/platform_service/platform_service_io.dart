@@ -2,12 +2,12 @@
 
 import 'dart:async';
 import 'dart:ffi';
+import 'dart:io';
+
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:win32/win32.dart';
-import 'package:ffi/ffi.dart';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'platform_service_interface.dart';
 
@@ -22,8 +22,7 @@ extension _IntParsing on List<int> {
 
 class PlatformService extends PlatformServiceInterface {
   @override
-  FutureOr<bool> printDirectWindows(
-      {required String printerName, required List<int> bytes}) async {
+  FutureOr<bool> printDirectWindows({required String printerName, required List<int> bytes}) async {
     try {
       /// [win32]
       Pointer<IntPtr>? phPrinter = calloc<HANDLE>();
@@ -110,18 +109,13 @@ class PlatformService extends PlatformServiceInterface {
   }
 
   @override
-  FutureOr<bool> printSerialBluetooth(
-      {required String serialNumber, required List<int> bytes}) {
+  FutureOr<bool> printSerialBluetooth({required String serialNumber, required List<int> bytes}) {
     return false;
   }
 
   @override
-  FutureOr<bool> printSocket(
-      {required String host,
-      required int port,
-      required List<int> bytes}) async {
-    final socket =
-        await Socket.connect(host, port, timeout: const Duration(seconds: 5));
+  FutureOr<bool> printSocket({required String host, required int port, required List<int> bytes}) async {
+    final socket = await Socket.connect(host, port, timeout: const Duration(seconds: 5));
 
     final chunked = bytes.splitByLength(250);
     final stream = Stream<List<int>>.fromIterable(chunked);
@@ -141,8 +135,7 @@ class PlatformService extends PlatformServiceInterface {
   }
 
   @override
-  FutureOr<bool> printUSB(
-      {required String serialNumber, required List<int> bytes}) {
+  FutureOr<bool> printUSB({required String serialNumber, required List<int> bytes}) {
     return false;
   }
 }
