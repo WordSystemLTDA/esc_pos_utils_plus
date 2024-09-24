@@ -1,4 +1,3 @@
-import 'commands.dart';
 import 'dart:convert';
 
 class QRSize {
@@ -35,6 +34,7 @@ class QRCorrection {
 
 class QRCode {
   List<int> bytes = <int>[];
+  static const String cQrHeader = '\x1D\x28\x6B';
 
   QRCode(String text, QRSize size, QRCorrection level) {
     // FN 167. QR Code: Set the size of module
@@ -48,8 +48,11 @@ class QRCode {
     // FN 180. QR Code: Store the data in the symbol storage area
     List<int> textBytes = latin1.encode(text);
     // pL pH cn fn m
-    bytes +=
-        cQrHeader.codeUnits + [textBytes.length + 3, 0x00, 0x31, 0x50, 0x30];
+    // bytes +=
+    //     cQrHeader.codeUnits + [textBytes.length + 3, 0x00, 0x31, 0x50, 0x30];
+
+    int textLength = textBytes.length + 3;
+    bytes += cQrHeader.codeUnits + [textLength & 0xFF, textLength >> 8, 0x31, 0x50, 0x30];
     bytes += textBytes;
 
     // FN 182. QR Code: Transmit the size information of the symbol data in the symbol storage area
